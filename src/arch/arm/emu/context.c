@@ -702,7 +702,7 @@ void arm_ctx_execute(struct arm_ctx_t *ctx)
 		
 		
 		/* Single bit predictor */
-		#ifdef BPRED_BIMODAL
+		#ifdef BPRED_SINGLEBIT
 		int bimod_index = bpred_last_addr & (bpred_size - 1);
 		int bimod_hash = bpred_last_addr - (bpred_last_addr & (bpred_size - 1));
 		if(bpred_buf[bimod_index] == 0 || (bpred_hash[bimod_index] != bimod_hash && !bpred_ignore_hash))// report as not taken
@@ -715,7 +715,7 @@ void arm_ctx_execute(struct arm_ctx_t *ctx)
 			if(bpred_buf[bimod_index]>1)
 				bpred_buf[bimod_index] = 1;
 		}
-		#endif BPRED_BIMODAL
+		#endif BPRED_SINGLEBIT
 		
 		/* Bimodal predictor */
 		#ifdef BPRED_BIMODAL
@@ -735,7 +735,7 @@ void arm_ctx_execute(struct arm_ctx_t *ctx)
 		#endif BPRED_BIMODAL
 		
 		/* Two-level adaptive */
-		//#ifdef BPRED_TWOLEVEL
+		#ifdef BPRED_TWOLEVEL
 		int twolevel_index = bpred_last_addr & (bpred_size - 1);
 		int twolevel_hash = regs->pc - (regs->pc & (bpred_size - 1));
 		
@@ -749,9 +749,9 @@ void arm_ctx_execute(struct arm_ctx_t *ctx)
 		if(bpred_pht[bpred_buf[twolevel_index]] > (bpred_ph_level - 1))
 			bpred_pht[bpred_buf[twolevel_index]] = bpred_ph_level-1;
 		bpred_hash[twolevel_index] = twolevel_hash;
-		//#endif BPRED_TWOLEVEL
+		#endif BPRED_TWOLEVEL
 	}else{
-		//#ifdef BPRED_TWOLEVEL
+		#ifdef BPRED_TWOLEVEL
 		int twolevel_index = bpred_last_addr & (bpred_size - 1);
 		int twolevel_hash = regs->pc - (regs->pc & (bpred_size - 1));
 		//if last branch in history table, but this time branch is not taken
@@ -761,7 +761,7 @@ void arm_ctx_execute(struct arm_ctx_t *ctx)
 			if(bpred_pht[bpred_buf[twolevel_index]] < 0)
 				bpred_pht[bpred_buf[twolevel_index]] = 0;
 		}
-		//#endif BPRED_TWOLEVEL	
+		#endif BPRED_TWOLEVEL	
 	}
 
 	bpred_last_addr = regs->pc;
